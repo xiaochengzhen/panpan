@@ -236,7 +236,7 @@ public class ResponseAdvice implements ResponseBodyAdvice<Object> {
                     String tableName = "";
                     String mapKey = "";
                     String mapValue = "";
-                    if (split1.length == 3) {
+                    if (split1.length == 4) {
                         dataSourceName = split1[0];
                         tableName = split1[1];
                         mapKey = split1[2];
