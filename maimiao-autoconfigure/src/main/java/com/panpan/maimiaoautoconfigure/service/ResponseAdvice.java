@@ -2,9 +2,9 @@ package com.panpan.maimiaoautoconfigure.service;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.panpan.maimiaoautoconfigure.annotation.Maimiao;
-import com.panpan.maimiaoautoconfigure.annotation.Panpan;
-import com.panpan.maimiaoautoconfigure.annotation.ReponseSchema;
+import com.panpan.maimiaoautoconfigure.annotation.QuoteFields;
+import com.panpan.maimiaoautoconfigure.annotation.QuoteField;
+import com.panpan.maimiaoautoconfigure.annotation.Quote;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +36,7 @@ public class ResponseAdvice implements ResponseBodyAdvice<Object> {
 
     @Override
     public boolean supports(MethodParameter methodParameter, Class<? extends HttpMessageConverter<?>> aClass) {
-        return methodParameter.hasMethodAnnotation(ReponseSchema.class);
+        return methodParameter.hasMethodAnnotation(Quote.class);
     }
 
     @Override
@@ -80,8 +80,8 @@ public class ResponseAdvice implements ResponseBodyAdvice<Object> {
             if (declaredFields != null && declaredFields.length > 0) {
                 for (Field declaredField : declaredFields) {
                     declaredField.setAccessible(true);
-                    boolean annotationPresent = declaredField.isAnnotationPresent(Panpan.class);
-                    boolean sunAssign = declaredField.isAnnotationPresent(Maimiao.class);
+                    boolean annotationPresent = declaredField.isAnnotationPresent(QuoteField.class);
+                    boolean sunAssign = declaredField.isAnnotationPresent(QuoteFields.class);
                     if (annotationPresent || sunAssign) {
                         if (sunAssign) {
                             try {
@@ -102,7 +102,7 @@ public class ResponseAdvice implements ResponseBodyAdvice<Object> {
                                 e.printStackTrace();
                             }
                         } else {
-                            Panpan annotation = declaredField.getAnnotation(Panpan.class);
+                            QuoteField annotation = declaredField.getAnnotation(QuoteField.class);
                             String value = annotation.value();
                             Object valueObj = parseMap.get(value);
                             String valueS = "";
@@ -161,9 +161,9 @@ public class ResponseAdvice implements ResponseBodyAdvice<Object> {
         Field[] declaredFields = data.getClass().getDeclaredFields();
         if (declaredFields != null && declaredFields.length > 0) {
             for (Field declaredField : declaredFields) {
-                boolean annotationPresent = declaredField.isAnnotationPresent(Panpan.class);
+                boolean annotationPresent = declaredField.isAnnotationPresent(QuoteField.class);
                 if (annotationPresent) {
-                    Panpan annotation = declaredField.getAnnotation(Panpan.class);
+                    QuoteField annotation = declaredField.getAnnotation(QuoteField.class);
                     String tableKey = getTableKey(annotation);
                     if (StringUtils.isNotBlank(tableKey)){
                         Object valueObj = mapObject.get(annotation.value());
@@ -186,7 +186,7 @@ public class ResponseAdvice implements ResponseBodyAdvice<Object> {
                         }
                     }
                 }
-                boolean sunAssign = declaredField.isAnnotationPresent(Maimiao.class);
+                boolean sunAssign = declaredField.isAnnotationPresent(QuoteFields.class);
                 if (sunAssign) {
                     declaredField.setAccessible(true);
                     try {
@@ -211,7 +211,7 @@ public class ResponseAdvice implements ResponseBodyAdvice<Object> {
         }
     }
 
-    public String getTableKey(Panpan annotation) {
+    public String getTableKey(QuoteField annotation) {
         String tableKey = "";
         String dataSourceName = annotation.dataSourceName();
         String tableName = annotation.tableName();

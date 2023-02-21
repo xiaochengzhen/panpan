@@ -12,11 +12,6 @@ import java.lang.annotation.Target;
  */
 @Target({ElementType.TYPE, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Panpan {
+public @interface QuoteFields {
 
-    String value();
-    String tableName();
-    String mapkey();
-    String mapValue();
-    String dataSourceName()default "dataSource";
 }

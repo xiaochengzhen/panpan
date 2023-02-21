@@ -10,8 +10,9 @@ import java.lang.annotation.Target;
  * @description
  * @date 2022/6/23 13:13
  */
-@Target({ElementType.TYPE, ElementType.FIELD})
+@Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Maimiao {
+public @interface Quote {
 
+    String value() default "";
 }

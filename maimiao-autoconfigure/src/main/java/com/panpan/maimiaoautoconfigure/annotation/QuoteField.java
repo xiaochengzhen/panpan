@@ -10,9 +10,13 @@ import java.lang.annotation.Target;
  * @description
  * @date 2022/6/23 13:13
  */
-@Target(ElementType.METHOD)
+@Target({ElementType.TYPE, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ReponseSchema {
+public @interface QuoteField {
 
-    String value() default "";
+    String value();
+    String tableName();
+    String mapkey();
+    String mapValue();
+    String dataSourceName()default "dataSource";
 }
