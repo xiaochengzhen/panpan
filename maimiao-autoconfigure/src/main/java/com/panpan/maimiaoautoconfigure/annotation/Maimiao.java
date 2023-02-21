@@ -1,4 +1,4 @@
-package com.panpan.maimiao.annotation;
+package com.panpan.maimiaoautoconfigure.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -10,9 +10,8 @@ import java.lang.annotation.Target;
  * @description
  * @date 2022/6/23 13:13
  */
-@Target(ElementType.METHOD)
+@Target({ElementType.TYPE, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ReponseSchema {
+public @interface Maimiao {
 
-    String value() default "";
 }

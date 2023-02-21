@@ -1,4 +1,4 @@
-package com.panpan.maimiao.annotation;
+package com.panpan.maimiaoautoconfigure.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

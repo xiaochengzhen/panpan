@@ -1,10 +1,10 @@
-package com.panpan.maimiao.service;
+package com.panpan.maimiaoautoconfigure.service;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.panpan.maimiao.annotation.Panpan;
-import com.panpan.maimiao.annotation.Maimiao;
-import com.panpan.maimiao.annotation.ReponseSchema;
+import com.panpan.maimiaoautoconfigure.annotation.Maimiao;
+import com.panpan.maimiaoautoconfigure.annotation.Panpan;
+import com.panpan.maimiaoautoconfigure.annotation.ReponseSchema;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +16,7 @@ import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
+
 import javax.sql.DataSource;
 import java.lang.reflect.Field;
 import java.sql.*;
