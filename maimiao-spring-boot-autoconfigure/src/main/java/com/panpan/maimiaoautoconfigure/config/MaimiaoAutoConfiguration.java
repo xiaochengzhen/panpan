@@ -1,5 +1,6 @@
 package com.panpan.maimiaoautoconfigure.config;
 
+import com.panpan.maimiaoautoconfigure.service.RequestAdvice;
 import com.panpan.maimiaoautoconfigure.service.ResponseAdvice;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
@@ -17,5 +18,11 @@ public class MaimiaoAutoConfiguration {
     @ConditionalOnWebApplication
     public ResponseAdvice responseAdvice() {
         return new ResponseAdvice();
+    }
+
+    @Bean
+    @ConditionalOnWebApplication
+    public RequestAdvice requestAdvice() {
+        return new RequestAdvice();
     }
 }

@@ -51,7 +51,7 @@ public class ResponseAdvice implements ResponseBodyAdvice<Object> {
                 }
             }
         } catch (Exception e) {
-            log.error("统一复制error",e);
+            log.error("统一赋值error",e);
         }
         return generalResponse;
     }
@@ -252,19 +252,23 @@ public class ResponseAdvice implements ResponseBodyAdvice<Object> {
                             try {
                                 if (dataSourceMap != null && !dataSourceName.isEmpty()){
                                     Connection connection =  dataSourceMap.get(dataSourceName).getConnection();
-                                    PreparedStatement preparedStatement = connection.prepareStatement(sql);
-                                    ResultSet resultSet = preparedStatement.executeQuery();
-                                    ResultSetMetaData metaData = resultSet.getMetaData();
-                                    if (metaData != null && metaData.getColumnCount() > 0){
-                                        while(resultSet.next()){
-                                            int columnCount = metaData.getColumnCount();
-                                            Map<String, Object> map = new HashMap<>();
-                                            for(int i = 1; i<= columnCount; i++) {
-                                                String columnName = metaData.getColumnName(i);
-                                                Object object = resultSet.getObject(columnName);
-                                                map.put(columnName, object);
+                                    if (connection != null){
+                                        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+                                        ResultSet resultSet = preparedStatement.executeQuery();
+                                        if (resultSet != null){
+                                            ResultSetMetaData metaData = resultSet.getMetaData();
+                                            if (metaData != null && metaData.getColumnCount() > 0){
+                                                while(resultSet.next()){
+                                                    int columnCount = metaData.getColumnCount();
+                                                    Map<String, Object> map = new HashMap<>();
+                                                    for(int i = 1; i<= columnCount; i++) {
+                                                        String columnName = metaData.getColumnName(i);
+                                                        Object object = resultSet.getObject(columnName);
+                                                        map.put(columnName, object);
+                                                    }
+                                                    mapListResult.add(map);
+                                                }
                                             }
-                                            mapListResult.add(map);
                                         }
                                     }
                                 }
