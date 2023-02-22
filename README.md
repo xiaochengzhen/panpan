@@ -7,7 +7,8 @@
         @CheckUnique
         @PostMapping("/save")
         public ResultDTO saveTblRole(@RequestBody TblRole tblRole) {}
-    * 2、请求类上@CheckUniqueField注解，如果是字段类型是引用类型，且，引用类型中也需要用到此功能，在这个引用数据类型上加@CheckUniqueFields注解
+    * 2、请求类上@CheckUniqueField注解，如果是字段类型是引用类型，且引用类型中也需要用到此功能，在这个引用数据类型上加@CheckUniqueFields注解，如果校验多个字段唯一，可以用#隔开，
+         如果需要同时校验多个字段中每个字段都唯一，可以用英文逗号隔开
       ```JAVA
       @CheckUniqueField(value = "role_code", tableName = "tbl_role", dataSourceName = "mpSource", tips = "角色编码已存在")
       public class TblRole {}
