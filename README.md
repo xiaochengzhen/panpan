@@ -50,5 +50,5 @@
  <dependency>
     <groupId>io.github.xiaochengzhen</groupId>
     <artifactId>maimiao-spring-boot-starter</artifactId>
-    <version>1.0.4</version>
+    <version>1.0.5</version>
   </dependency>
