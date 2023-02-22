@@ -8,8 +8,8 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * @author xiaobo
- * @description
- * @date 2023/2/21 14:33
+ * description 配置类
+ * date 2023/2/21 14:33
  */
 @Configuration
 public class MaimiaoAutoConfiguration {

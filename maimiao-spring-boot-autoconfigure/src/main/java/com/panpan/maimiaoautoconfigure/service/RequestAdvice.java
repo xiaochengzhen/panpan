@@ -26,8 +26,8 @@ import java.util.List;
 import java.util.Map;
 /**
  * @author xiaobo
- * @description
- * @date 2022/7/21 16:56
+ * description 检验唯一性方
+ * date 2022/7/21 16:56
  */
 @Slf4j
 @RestControllerAdvice

@@ -7,8 +7,8 @@ import java.lang.annotation.Target;
 
 /**
  * @author xiaobo
- * @description
- * @date 2022/6/23 13:13
+ * description 校验唯一性字段信息
+ * date 2022/6/23 13:13
  */
 @Target({ElementType.TYPE, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
