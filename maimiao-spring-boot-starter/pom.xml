@@ -7,13 +7,13 @@
         <artifactId>maimiao</artifactId>
         <version>1.0.4</version>
     </parent>
-    <artifactId>maimiao-start</artifactId>
+    <artifactId>maimiao-spring-boot-starter</artifactId>
     <name>maimiao-start</name>
-    <description>maimiao-start</description>
+    <description>maimiao-spring-boot-starter</description>
     <dependencies>
         <dependency>
             <groupId>io.github.xiaochengzhen</groupId>
-            <artifactId>maimiao-autoconfigure</artifactId>
+            <artifactId>maimiao-spring-boot-autoconfigure</artifactId>
             <version>1.0.4</version>
         </dependency>
     </dependencies>

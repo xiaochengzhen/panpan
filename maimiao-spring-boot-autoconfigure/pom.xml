@@ -7,9 +7,9 @@
         <artifactId>maimiao</artifactId>
         <version>1.0.4</version>
     </parent>
-    <artifactId>maimiao-autoconfigure</artifactId>
-    <name>maimiao-autoconfigure</name>
-    <description>maimiao-autoconfigure</description>
+    <artifactId>maimiao-spring-boot-autoconfigure</artifactId>
+    <name>maimiao-spring-boot-autoconfigure</name>
+    <description>maimiao-spring-boot-autoconfigure</description>
 
     <dependencies>
         <dependency>
