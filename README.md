@@ -45,10 +45,22 @@
     mapkey 关联字段在关联表中的字段名称
     mapValue 关联字段表中需要获取的字段名称
     
+#### 属性设置默认值
+  - 场景：我们保存或者修改数据的时候，总会有默认值的设置，如果前端不设置值，后端设置默认值，为了不侵入业务代码，可以通过此功能在属性上面设置完成
+  - 使用：只需一步
+    * 1、需要在控制层对应方法上面加@Quote，表示要用到此功能
+      ```JAVA
+      @DefaultValueField("maimiao")
+      private String name;
+    * 2、如果是字段类型是引用类型，且引用类型中也需要用到此功能，在这个引用数据类型上加@DefaultValueFields注解
+      ```JAVA
+      @DefaultValueFields
+      private TestDefault testDefault;
+    
 #### 依赖导入
  ``` maven 
  <dependency>
     <groupId>io.github.xiaochengzhen</groupId>
     <artifactId>maimiao-spring-boot-starter</artifactId>
-    <version>1.0.7</version>
+    <version>1.0.8</version>
   </dependency>
