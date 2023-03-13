@@ -29,7 +29,7 @@ import java.util.*;
  */
 @Slf4j
 @RestControllerAdvice
-public class ResponseAdvice implements ResponseBodyAdvice<Object> {
+public class QuoteAdvice implements ResponseBodyAdvice<Object> {
 
     @Autowired(required = false)
     private Map<String, DataSource> dataSourceMap;

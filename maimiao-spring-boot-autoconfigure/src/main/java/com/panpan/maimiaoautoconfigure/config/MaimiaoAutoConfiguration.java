@@ -1,7 +1,8 @@
 package com.panpan.maimiaoautoconfigure.config;
 
-import com.panpan.maimiaoautoconfigure.service.RequestAdvice;
-import com.panpan.maimiaoautoconfigure.service.ResponseAdvice;
+import com.panpan.maimiaoautoconfigure.service.CheckUniqueAdvice;
+import com.panpan.maimiaoautoconfigure.service.DefaultValueAdvice;
+import com.panpan.maimiaoautoconfigure.service.QuoteAdvice;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,13 +17,19 @@ public class MaimiaoAutoConfiguration {
 
     @Bean
     @ConditionalOnWebApplication
-    public ResponseAdvice responseAdvice() {
-        return new ResponseAdvice();
+    public QuoteAdvice quoteAdvice() {
+        return new QuoteAdvice();
     }
 
     @Bean
     @ConditionalOnWebApplication
-    public RequestAdvice requestAdvice() {
-        return new RequestAdvice();
+    public CheckUniqueAdvice checkUniqueAdvice() {
+        return new CheckUniqueAdvice();
+    }
+
+    @Bean
+    @ConditionalOnWebApplication
+    public DefaultValueAdvice defaultValueAdvice() {
+        return new DefaultValueAdvice();
     }
 }

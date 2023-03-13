@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -31,7 +32,8 @@ import java.util.Map;
  */
 @Slf4j
 @RestControllerAdvice
-public class RequestAdvice implements RequestBodyAdvice {
+@Order(20)
+public class CheckUniqueAdvice implements RequestBodyAdvice {
 
     @Autowired(required = false)
     private Map<String, DataSource> dataSourceMap;
