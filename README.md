@@ -15,11 +15,11 @@
     * 3、如果校验不通过，会抛出异常，异常信息可以配置，用户自行处理异常。
   - @CheckUniqueField解释
    value 校验字段
-    dataSourceName 配置的dataSource名称，默认dataSource
-    tableName 对应数据库表名称
-    deleteCol 如果支持逻辑删除，逻辑删除的字段名称
-    deleteValue 逻辑删除，标识不删除的逻辑值
-    empty 如果校验字段是空的情况，是否还需要校验，默认true
+    dataSourceName 配置的dataSource名称，默认dataSource\
+    tableName 对应数据库表名称\
+    deleteCol 如果支持逻辑删除，逻辑删除的字段名称\
+    deleteValue 逻辑删除，标识不删除的逻辑值\
+    empty 如果校验字段是空的情况，是否还需要校验，默认true\
     tips 提示信息
   
 #### 关联数据获取
@@ -39,10 +39,10 @@
         @QuoteField(value = "userId", mapkey = "id", mapValue = "user_name", tableName = "user", dataSourceName ="mpSource")
         private String userName;
   - @QuoteField注解解释
-    value 关联字段
-    dataSourceName 配置的dataSource名称，默认dataSource
-    tableName 对应数据库表名称
-    mapkey 关联字段在关联表中的字段名称
+    value 关联字段\
+    dataSourceName 配置的dataSource名称，默认dataSource\
+    tableName 对应数据库表名称\
+    mapkey 关联字段在关联表中的字段名称\
     mapValue 关联字段表中需要获取的字段名称
     
 #### 属性设置默认值
