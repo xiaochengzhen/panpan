@@ -13,7 +13,7 @@
       @CheckUniqueField(value = "role_code", tableName = "tbl_role", dataSourceName = "mpSource", tips = "角色编码已存在")
       public class TblRole {}
     * 3、如果校验不通过，会抛出异常，异常信息可以配置，用户自行处理异常。
-  - @CheckUniqueField解释\
+  - @CheckUniqueField属性解释\
       value 校验字段\
       dataSourceName 配置的dataSource名称，默认dataSource\
       tableName 对应数据库表名称\
@@ -38,7 +38,7 @@
         ```JAVA
         @QuoteField(value = "userId", mapkey = "id", mapValue = "user_name", tableName = "user", dataSourceName ="mpSource")
         private String userName;
-  - @QuoteField注解解释\
+  - @QuoteField属性解释\
       value 关联字段\
       dataSourceName 配置的dataSource名称，默认dataSource\
       tableName 对应数据库表名称\
