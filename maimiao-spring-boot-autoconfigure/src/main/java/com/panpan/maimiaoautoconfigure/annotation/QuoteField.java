@@ -14,9 +14,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface QuoteField {
 
-    String value();
+    String value();//关联属性名称
     String tableName();
-    String mapkey();
-    String mapValue();
+    String associatedField();//关联字段在关联表中的字段名称
+    String getField();//关联字段表中需要获取的字段名称
     String dataSourceName()default "dataSource";
 }

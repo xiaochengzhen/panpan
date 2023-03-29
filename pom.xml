@@ -13,7 +13,7 @@
     <groupId>io.github.xiaochengzhen</groupId>
     <artifactId>maimiao</artifactId>
     <!--需要特别注意,你上传的是SNAPSHOT仓库,所以此处版本号后缀必须带SNAPSHOT-->
-    <version>1.0.8</version>
+    <version>1.0.9</version>
 
     <!--项目信息...-->
     <name>maimiao</name>
@@ -160,8 +160,8 @@
                 </snapshotRepository>
                 <repository>
                     <id>release</id>
-                    <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-                   <!-- <url>https://s01.oss.sonatype.org/content/repositories/releases</url>-->
+                 <!--   <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>-->
+                    <url>https://s01.oss.sonatype.org/content/repositories/releases</url>
                 </repository>
             </distributionManagement>
         </profile>

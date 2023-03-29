@@ -75,10 +75,22 @@ public class QuoteAdvice implements ResponseBodyAdvice<Object> {
     public void setValue(Object obj, Map<String, Map<String, Object>> useMap) {
         if (useMap != null && !useMap.isEmpty()) {
             Map<String, Object> parseMap = JSON.parseObject(JSON.toJSONString(obj, SerializerFeature.WriteMapNullValue), Map.class);
+            List<Field> fieldList = new ArrayList<>();
             Class<?> clazz = obj.getClass();
             Field[] declaredFields = clazz.getDeclaredFields();
             if (declaredFields != null && declaredFields.length > 0) {
-                for (Field declaredField : declaredFields) {
+                fieldList.addAll(Arrays.asList(declaredFields));
+            }
+            Class<?> superclass = clazz.getSuperclass();
+            while (superclass != null) {
+                Field[] declaredFieldsSuper = superclass.getDeclaredFields();
+                if (declaredFieldsSuper != null && declaredFieldsSuper.length > 0) {
+                    fieldList.addAll(Arrays.asList(declaredFieldsSuper));
+                }
+                superclass = superclass.getSuperclass();
+            }
+            if (!CollectionUtils.isEmpty(fieldList)) {
+                for (Field declaredField : fieldList) {
                     declaredField.setAccessible(true);
                     boolean annotationPresent = declaredField.isAnnotationPresent(QuoteField.class);
                     boolean sunAssign = declaredField.isAnnotationPresent(QuoteFields.class);
@@ -158,9 +170,21 @@ public class QuoteAdvice implements ResponseBodyAdvice<Object> {
 
     public void setColMap(Object data, Map<String, String> tableNameValuesMap) {
         Map<String, Object> mapObject = JSON.parseObject(JSON.toJSONString(data, SerializerFeature.WriteMapNullValue), Map.class);
+        List<Field> fieldList = new ArrayList<>();
         Field[] declaredFields = data.getClass().getDeclaredFields();
         if (declaredFields != null && declaredFields.length > 0) {
-            for (Field declaredField : declaredFields) {
+            fieldList.addAll(Arrays.asList(declaredFields));
+        }
+        Class<?> superclass = data.getClass().getSuperclass();
+        while (superclass != null) {
+            Field[] declaredFieldsSuper = superclass.getDeclaredFields();
+            if (declaredFieldsSuper != null && declaredFieldsSuper.length > 0) {
+                fieldList.addAll(Arrays.asList(declaredFieldsSuper));
+            }
+            superclass = superclass.getSuperclass();
+        }
+        if (!CollectionUtils.isEmpty(fieldList)) {
+            for (Field declaredField : fieldList) {
                 boolean annotationPresent = declaredField.isAnnotationPresent(QuoteField.class);
                 if (annotationPresent) {
                     QuoteField annotation = declaredField.getAnnotation(QuoteField.class);
@@ -176,7 +200,7 @@ public class QuoteAdvice implements ResponseBodyAdvice<Object> {
                         }
                         if (StringUtils.isNotBlank(valueS)) {
                             valueS = "'"+valueS+"'";
-                            //可以优化的地方，如果是mapValue 不同的情况下，会查询数据库多次，可以tableKey中mapValue 不参与判断存在，但是tableNameValuesMap 的key需要 mapValue
+                            //可以优化的地方，如果是getField 不同的情况下，会查询数据库多次，可以tableKey中getField 不参与判断存在，但是tableNameValuesMap 的key需要 getField
                             String values = tableNameValuesMap.get(tableKey);
                             if (StringUtils.isNotBlank(values)) {
                                 tableNameValuesMap.put(tableKey, values+","+ valueS);
@@ -215,10 +239,10 @@ public class QuoteAdvice implements ResponseBodyAdvice<Object> {
         String tableKey = "";
         String dataSourceName = annotation.dataSourceName();
         String tableName = annotation.tableName();
-        String mapkey = annotation.mapkey();
-        String mapValue = annotation.mapValue();
-        if (StringUtils.isNotBlank(tableName) && StringUtils.isNotBlank(mapkey) && StringUtils.isNotBlank(mapValue)) {
-            tableKey = dataSourceName+"&"+ tableName + "&" + mapkey + "&" + mapValue;
+        String associatedField = annotation.associatedField();
+        String getField = annotation.getField();
+        if (StringUtils.isNotBlank(tableName) && StringUtils.isNotBlank(associatedField) && StringUtils.isNotBlank(getField)) {
+            tableKey = dataSourceName+"&"+ tableName + "&" + associatedField + "&" + getField;
         }
         return tableKey;
     }
@@ -235,20 +259,20 @@ public class QuoteAdvice implements ResponseBodyAdvice<Object> {
                     String[] split1 = k.split("&");
                     String dataSourceName = "";
                     String tableName = "";
-                    String mapKey = "";
-                    String mapValue = "";
+                    String associatedField = "";
+                    String getField = "";
                     if (split1.length == 4) {
                         dataSourceName = split1[0];
                         tableName = split1[1];
-                        mapKey = split1[2];
-                        mapValue = split1[3];
+                        associatedField = split1[2];
+                        getField = split1[3];
                     }
-                    String selectSqlKey = dataSourceName+"&"+tableName+"&"+mapKey+"&"+v;
-                    if (StringUtils.isNotBlank(tableName) && StringUtils.isNotBlank(mapKey) && StringUtils.isNotBlank(mapValue)) {
+                    String selectSqlKey = dataSourceName+"&"+tableName+"&"+associatedField+"&"+v;
+                    if (StringUtils.isNotBlank(tableName) && StringUtils.isNotBlank(associatedField) && StringUtils.isNotBlank(getField)) {
                         List<Map<String, Object>> mapList = tableColMap.get(selectSqlKey);
                         if (CollectionUtils.isEmpty(mapList)) {
                             List<Map<String, Object>> mapListResult = new ArrayList<>();
-                            String sql = "select * from " + tableName + " where " + mapKey + " in (" + v + ")";
+                            String sql = "select * from " + tableName + " where " + associatedField + " in (" + v + ")";
                             try {
                                 if (dataSourceMap != null && !dataSourceName.isEmpty()){
                                     Connection connection =  dataSourceMap.get(dataSourceName).getConnection();
@@ -285,10 +309,10 @@ public class QuoteAdvice implements ResponseBodyAdvice<Object> {
                         List<Map<String, Object>> maps = tableColMap.get(selectSqlKey);
                         if (!CollectionUtils.isEmpty(maps)) {
                             for (Map<String, Object> mapAll : maps) {
-                                Object mapKeyObj = mapAll.get(mapKey);
-                                Object mapValueObj = mapAll.get(mapValue);
-                                if (mapKeyObj != null && mapValueObj != null) {
-                                    map.put(mapKeyObj.toString(), mapValueObj);
+                                Object associatedFieldObj = mapAll.get(associatedField);
+                                Object getFieldObj = mapAll.get(getField);
+                                if (associatedFieldObj != null && getFieldObj != null) {
+                                    map.put(associatedFieldObj.toString(), getFieldObj);
                                 }
                             }
                         }
