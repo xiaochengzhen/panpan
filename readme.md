@@ -13,14 +13,14 @@
       @CheckUniqueField(value = "role_code", tableName = "tbl_role", dataSourceName = "mpSource", tips = "角色编码已存在")
       public class TblRole {}
     * 3、如果校验不通过，会抛出异常，异常信息可以配置，用户自行处理异常。
-  - @CheckUniqueField解释
-    - value 校验字段
-    - dataSourceName 配置的dataSource名称，默认dataSource
-    - tableName 对应数据库表名称
-    - deleteCol 如果支持逻辑删除，逻辑删除的字段名称
-    - deleteValue 逻辑删除，标识不删除的逻辑值
-    - empty 如果校验字段是空的情况，是否还需要校验，默认true
-    - tips 提示信息
+  - @CheckUniqueField属性解释\
+      value 校验字段\
+      dataSourceName 配置的dataSource名称，默认dataSource\
+      tableName 对应数据库表名称\
+      deleteCol 如果支持逻辑删除，逻辑删除的字段名称\
+      deleteValue 逻辑删除，标识不删除的逻辑值\
+      empty 如果校验字段是空的情况，是否还需要校验，默认true\
+      tips 提示信息
   
 #### 关联数据获取
   - 场景：通常情况下，我们关联信息只是存的关联id，但是用户查询接口通常需要看到关联信息不限于id，所以查询接口中需要在业务代码中重新查询关联信息，这样就使代码臃肿，
@@ -38,17 +38,29 @@
         ```JAVA
         @QuoteField(value = "userId", mapkey = "id", mapValue = "user_name", tableName = "user", dataSourceName ="mpSource")
         private String userName;
-  - @QuoteField注解解释
-    - value 关联字段
-    - dataSourceName 配置的dataSource名称，默认dataSource
-    - tableName 对应数据库表名称
-    - mapkey 关联字段在关联表中的字段名称
-    - mapValue 关联字段表中需要获取的字段名称
-
+  - @QuoteField属性解释\
+      value 关联字段\
+      dataSourceName 配置的dataSource名称，默认dataSource\
+      tableName 对应数据库表名称\
+      mapkey 关联字段在关联表中的字段名称\
+      mapValue 关联字段表中需要获取的字段名称
+    
+#### 属性设置默认值
+  - 场景：我们保存或者修改数据的时候，总会有默认值的设置，如果前端不设置值，后端设置默认值，为了不侵入业务代码，可以通过此功能在属性上面设置完成
+  - 使用：只需一步
+    * 1、需要在字段上面加@DefaultValueField，表示要用为此字段设值默认值
+      ```JAVA
+      @DefaultValueField("maimiao")
+      private String name;
+    * 2、如果是字段类型是引用类型，且引用类型中也需要用到此功能，在这个引用数据类型上加@DefaultValueFields注解
+      ```JAVA
+      @DefaultValueFields
+      private TestDefault testDefault;
+    
 #### 依赖导入
  ``` maven 
  <dependency>
     <groupId>io.github.xiaochengzhen</groupId>
     <artifactId>maimiao-spring-boot-starter</artifactId>
-    <version>1.0.7</version>
+    <version>1.0.8</version>
   </dependency>
