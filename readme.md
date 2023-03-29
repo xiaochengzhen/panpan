@@ -44,7 +44,7 @@
     - tableName 对应数据库表名称
     - mapkey 关联字段在关联表中的字段名称
     - mapValue 关联字段表中需要获取的字段名称
-    
+
 #### 依赖导入
  ``` maven 
  <dependency>
