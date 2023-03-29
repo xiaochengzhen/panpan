@@ -36,7 +36,7 @@
         }
       * 2、响应类对应的字段上加上@QuoteField注解，如果是字段类型是引用类型，且，引用类型中也需要用到此功能，在这个引用数据类型上加@QuoteFields注解
         ```JAVA
-        @QuoteField(value = "userId", mapkey = "id", mapValue = "user_name", tableName = "user", dataSourceName ="mpSource")
+        @QuoteField(value = "userId", associatedField = "id", getField = "user_name", tableName = "user", dataSourceName ="mpSource")
         private String userName;
   - @QuoteField属性解释\
       value 关联属性名称\
