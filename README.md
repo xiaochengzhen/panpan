@@ -39,11 +39,11 @@
         @QuoteField(value = "userId", mapkey = "id", mapValue = "user_name", tableName = "user", dataSourceName ="mpSource")
         private String userName;
   - @QuoteField属性解释\
-      value 关联字段\
+      value 关联属性名称\
       dataSourceName 配置的dataSource名称，默认dataSource\
       tableName 对应数据库表名称\
-      mapkey 关联字段在关联表中的字段名称\
-      mapValue 关联字段表中需要获取的字段名称
+      associatedField 关联字段在关联表中的字段名称\
+      getField 关联字段表中需要获取的字段名称
     
 #### 属性设置默认值
   - 场景：我们保存或者修改数据的时候，总会有默认值的设置，如果前端不设置值，后端设置默认值，为了不侵入业务代码，可以通过此功能在属性上面设置完成
