@@ -2,6 +2,8 @@ package com.panpan.maimiaoautoconfigure.service;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import com.panpan.maimiaoautoconfigure.annotation.QuoteFields;
 import com.panpan.maimiaoautoconfigure.annotation.QuoteField;
 import com.panpan.maimiaoautoconfigure.annotation.Quote;
@@ -9,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
+import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.server.ServerHttpRequest;
@@ -17,10 +20,12 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
+import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 import java.lang.reflect.Field;
 import java.sql.*;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author xiaobo
@@ -30,6 +35,13 @@ import java.util.*;
 @Slf4j
 @RestControllerAdvice
 public class QuoteAdvice implements ResponseBodyAdvice<Object> {
+
+    @Autowired
+    private Environment env;
+
+    private Cache<String, List<Map<String, Object>>> caffeine;
+
+    private boolean cache = false;
 
     @Autowired(required = false)
     private Map<String, DataSource> dataSourceMap;
@@ -242,7 +254,7 @@ public class QuoteAdvice implements ResponseBodyAdvice<Object> {
         String associatedField = annotation.associatedField();
         String getField = annotation.getField();
         if (StringUtils.isNotBlank(tableName) && StringUtils.isNotBlank(associatedField) && StringUtils.isNotBlank(getField)) {
-            tableKey = dataSourceName+"&"+ tableName + "&" + associatedField + "&" + getField;
+            tableKey = dataSourceName + "&" + tableName + "&" + associatedField + "&" + getField;
         }
         return tableKey;
     }
@@ -269,43 +281,18 @@ public class QuoteAdvice implements ResponseBodyAdvice<Object> {
                     }
                     String selectSqlKey = dataSourceName+"&"+tableName+"&"+associatedField+"&"+v;
                     if (StringUtils.isNotBlank(tableName) && StringUtils.isNotBlank(associatedField) && StringUtils.isNotBlank(getField)) {
-                        List<Map<String, Object>> mapList = tableColMap.get(selectSqlKey);
-                        if (CollectionUtils.isEmpty(mapList)) {
-                            List<Map<String, Object>> mapListResult = new ArrayList<>();
-                            String sql = "select * from " + tableName + " where " + associatedField + " in (" + v + ")";
-                            try {
-                                if (dataSourceMap != null && !dataSourceName.isEmpty()){
-                                    Connection connection =  dataSourceMap.get(dataSourceName).getConnection();
-                                    if (connection != null){
-                                        PreparedStatement preparedStatement = connection.prepareStatement(sql);
-                                        ResultSet resultSet = preparedStatement.executeQuery();
-                                        if (resultSet != null){
-                                            ResultSetMetaData metaData = resultSet.getMetaData();
-                                            if (metaData != null && metaData.getColumnCount() > 0){
-                                                while(resultSet.next()){
-                                                    int columnCount = metaData.getColumnCount();
-                                                    Map<String, Object> map = new HashMap<>();
-                                                    for(int i = 1; i<= columnCount; i++) {
-                                                        String columnName = metaData.getColumnName(i);
-                                                        Object object = resultSet.getObject(columnName);
-                                                        map.put(columnName, object);
-                                                    }
-                                                    mapListResult.add(map);
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            } catch (SQLException e) {
-                                e.printStackTrace();
-                            }
-                            if (!CollectionUtils.isEmpty(mapListResult)) {
-                                tableColMap.put(selectSqlKey, mapListResult);
+                        List<Map<String, Object>> mapColumn = tableColMap.get(selectSqlKey);
+                        if (CollectionUtils.isEmpty(mapColumn)) {
+                            if (cache) {
+                                List<Map<String, Object>> maps = caffeine.get(selectSqlKey, key -> handleDb(selectSqlKey));
+                                tableColMap.put(selectSqlKey, maps);
+                            } else {
+                                tableColMap.put(selectSqlKey, handleDb(selectSqlKey));
                             }
                         }
                     }
                     Map<String, Object> map = new HashMap<>();
-                    if (tableColMap != null && !tableColMap.isEmpty()) {
+                    if (!CollectionUtils.isEmpty(tableColMap)) {
                         List<Map<String, Object>> maps = tableColMap.get(selectSqlKey);
                         if (!CollectionUtils.isEmpty(maps)) {
                             for (Map<String, Object> mapAll : maps) {
@@ -322,5 +309,66 @@ public class QuoteAdvice implements ResponseBodyAdvice<Object> {
             });
         }
         return resultMap;
+    }
+
+    private List<Map<String, Object>> handleDb(String selectSqlKey) {
+        String[] split = selectSqlKey.split("&");
+        String dataSourceName = split[0];
+        String tableName = split[1];
+        String associatedField = split[2];
+        String v = split[3];
+        List<Map<String, Object>> mapListResult = new ArrayList<>();
+        String sql = "select * from " + tableName + " where " + associatedField + " in (" + v + ")";
+        try {
+            if (dataSourceMap != null && !dataSourceName.isEmpty()){
+                Connection connection =  dataSourceMap.get(dataSourceName).getConnection();
+                if (connection != null){
+                    PreparedStatement preparedStatement = connection.prepareStatement(sql);
+                    ResultSet resultSet = preparedStatement.executeQuery();
+                    if (resultSet != null){
+                        ResultSetMetaData metaData = resultSet.getMetaData();
+                        if (metaData != null && metaData.getColumnCount() > 0){
+                            while(resultSet.next()){
+                                int columnCount = metaData.getColumnCount();
+                                Map<String, Object> map = new HashMap<>();
+                                for(int i = 1; i<= columnCount; i++) {
+                                    String columnName = metaData.getColumnName(i);
+                                    Object object = resultSet.getObject(columnName);
+                                    map.put(columnName, object);
+                                }
+                                mapListResult.add(map);
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return mapListResult;
+    }
+
+    @PostConstruct
+    public void buildCaffeine() {
+        int initialCapacity = 100;
+        int maximumSize = 500;
+        int expireAfterWrite = 10;
+        if (StringUtils.isNotBlank(env.getProperty("caffeine.initialCapacity"))) {
+            initialCapacity = Integer.valueOf(env.getProperty("caffeine.initialCapacity"));
+        }
+        if (StringUtils.isNotBlank(env.getProperty("caffeine.maximumSize"))) {
+            maximumSize = Integer.valueOf(env.getProperty("caffeine.maximumSize"));
+        }
+        if (StringUtils.isNotBlank(env.getProperty("caffeine.expireAfterWrite"))) {
+            expireAfterWrite = Integer.valueOf(env.getProperty("caffeine.expireAfterWrite"));
+        }
+        if (StringUtils.isNotBlank(env.getProperty("caffeine.cache"))) {
+            cache = Boolean.valueOf(env.getProperty("caffeine.cache"));
+        }
+        caffeine = Caffeine.newBuilder()
+                .initialCapacity(initialCapacity)//初始大小
+                .maximumSize(maximumSize)//最大数量
+                .expireAfterWrite(expireAfterWrite, TimeUnit.MINUTES)//过期时间
+                .build();
     }
 }
